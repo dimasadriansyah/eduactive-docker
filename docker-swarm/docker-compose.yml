@@ -1,0 +1,47 @@
+version: '3.3'
+services:
+  web:
+    # Path to dockerfile.
+    # '.' represents the current directory in which
+    # docker-compose.yml is present.
+    image: venky8283/flask_app:3.0
+    # Mapping of container port to host
+    ports:
+      - "5000:5000"
+    networks:
+      - app
+    deploy:
+      replicas: 3
+  database:
+    # image to fetch from docker hub
+    image: mysql/mysql-server:5.7
+    # Environment variables for startup script
+    # container will use these variables
+    # to start the container with these defined variables. 
+    env_file:
+      - /home/dimas/Documents/educative/educative-docker/docker-swarm/.env
+    # Mount init.sql file to automatically run 
+    # and create tables for us.
+    # /usercode is the host directory on educative 
+    # everything in docker-entrypoint-initdb.d folder
+    # is executed as soon as container is up nd running.
+    volumes:
+      - "/home/dimas/Documents/educative/educative-docker/docker-swarm/db/init.sql:/docker-entrypoint-initdb.d/init.sql"
+    deploy:
+      replicas: 2
+    networks:
+      - app
+  viz:
+    # Visualizer image for swarm cluster.
+    image: dockersamples/visualizer
+    # Mapping container ports to host port
+    ports: 
+      - "8080:8080"
+    # Mounting docker socket to container.
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    networks:
+      - app
+networks:
+  app:
+    
