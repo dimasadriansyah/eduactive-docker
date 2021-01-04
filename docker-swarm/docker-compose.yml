@@ -4,13 +4,20 @@ services:
     # Path to dockerfile.
     # '.' represents the current directory in which
     # docker-compose.yml is present.
-    image: venky8283/flask_app:3.0
+    build: .
     # Mapping of container port to host
     ports:
       - "5000:5000"
     networks:
       - app
     deploy:
+      resources:
+              limit:
+                      cpus: '0.50'
+                      memory: 50M
+              reservations:
+                      cpus: '0.25'
+                      memory: 20M
       replicas: 3
   database:
     # image to fetch from docker hub
